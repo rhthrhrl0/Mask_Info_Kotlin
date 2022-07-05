@@ -1,5 +1,6 @@
 package com.example.mask_info_kotlin
 
+import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,10 +11,11 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+
 class MainViewModel : ViewModel() {
     val itemLiveData = MutableLiveData<List<Store>>()
     val loadingLiveData = MutableLiveData<Boolean>()
-
+    var location:Location= Location("a")
     private val service: MaskService
 
     init {
@@ -35,7 +37,17 @@ class MainViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             val storeInfo = service.fetchStoreInfo(37.128, 127.043)
-            itemLiveData.postValue(storeInfo.stores)
+            val stores:List<Store> = storeInfo.stores.filter {
+                it.remain_stat != null && it.remain_stat!="empty"
+            }
+            for (x in stores){
+                x.distance=LocationDistance.distance(location.latitude,location.longitude,x.lat,x.lng,"k")
+            }
+
+            // 거리 기준으로 리스트 정렬
+            val comparator : Comparator<Store> = compareBy { it.distance }
+            itemLiveData.postValue(stores.sortedWith(comparator))
+
             //로딩끝
             loadingLiveData.postValue(false)
         }

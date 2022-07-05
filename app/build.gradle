@@ -65,4 +65,10 @@ dependencies {
     // by ViewModels를 위해.
     implementation("androidx.fragment:fragment-ktx:1.4.1")
 
+    // 위치 정보를 얻기위한 구글플레이서비스 추가.
+    implementation "com.google.android.gms:play-services-location:20.0.0"
+
+    // tedpermission이라는 권한 관련 라이브러리임.
+    implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
+
 }

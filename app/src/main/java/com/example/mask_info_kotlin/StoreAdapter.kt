@@ -34,7 +34,7 @@ class StoreAdapter : RecyclerView.Adapter<StoreViewHolder>() {
         val store: Store = mItems[position] //뷰홀더와 연결시킬 Store를 얻음.
         holder.nameTextView.text = store.name //뷰홀더와 연결된 자식뷰에 값을 설정.
         holder.addressTextView.text = store.addr
-        holder.distanceTextView.text = "1km"
+        holder.distanceTextView.text = String.format("%.2fkm",store.distance)
         var remainStat = "충분"
         var count = "100개 이상" //디폴트 값.
         var color = Color.GREEN
