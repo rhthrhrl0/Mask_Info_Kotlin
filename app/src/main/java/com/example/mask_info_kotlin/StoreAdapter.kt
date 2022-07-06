@@ -5,17 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mask_info_kotlin.databinding.ItemStoreBinding
 import com.example.mask_info_kotlin.model.Store
 
 //아이템 뷰 정보를 가지고 있는 클래스임.
 class StoreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    // 뷰홀더의 멤버변수들.
-    var nameTextView: TextView = itemView.findViewById(R.id.name_text_view)
-    var addressTextView: TextView = itemView.findViewById(R.id.addr_text_view)
-    var distanceTextView: TextView = itemView.findViewById(R.id.distance_text_view)
-    var remainTextView: TextView = itemView.findViewById(R.id.remain_text_view)
-    var countTextView: TextView = itemView.findViewById(R.id.count_text_view)
+    val binding=ItemStoreBinding.bind(itemView) //아이템뷰를 뷰홀더와 바인딩시켜줌.
 }
 
 //internal은 protected같은거임
@@ -32,40 +29,7 @@ class StoreAdapter : RecyclerView.Adapter<StoreViewHolder>() {
 
     override fun onBindViewHolder(holder: StoreViewHolder, position: Int) {
         val store: Store = mItems[position] //뷰홀더와 연결시킬 Store를 얻음.
-        holder.nameTextView.text = store.name //뷰홀더와 연결된 자식뷰에 값을 설정.
-        holder.addressTextView.text = store.addr
-        holder.distanceTextView.text = String.format("%.2fkm",store.distance)
-        var remainStat = "충분"
-        var count = "100개 이상" //디폴트 값.
-        var color = Color.GREEN
-        when (store.remain_stat) {
-            "plenty" -> {
-                count = "100개 이상"
-                remainStat = "충분"
-                color = Color.GREEN
-            }
-            "some" -> {
-                count = "30개 이상"
-                remainStat = "여유"
-                color = Color.YELLOW
-            }
-            "few" -> {
-                count = "2개 이상"
-                remainStat = "매진 임박"
-                color = Color.RED
-            }
-            "empty" -> {
-                count = "1개 이하"
-                remainStat = "재고 없음"
-                color = Color.GRAY
-            }
-            else -> {
-            }
-        }
-        holder.remainTextView.text = remainStat
-        holder.countTextView.text = count
-        holder.remainTextView.setTextColor(color)
-        holder.countTextView.setTextColor(color)
+        holder.binding.storeItem=store //데이터바인딩을 위해 연결.
     }
 
     override fun getItemCount(): Int = mItems.size
@@ -76,4 +40,43 @@ class StoreAdapter : RecyclerView.Adapter<StoreViewHolder>() {
         notifyDataSetChanged() //UI 갱신
     }
 
+}
+
+@BindingAdapter("app:remainStatText")
+fun setRemainStatText(textView: TextView, store: Store) {
+    var remainStat = "충분"
+    when (store.remain_stat) {
+        "plenty" -> textView.text = "충분"
+        "some" -> textView.text = "여유"
+        "few" -> textView.text = "매진 임박"
+        "empty" -> textView.text = "재고 없음"
+        else -> { }
+    }
+}
+
+@BindingAdapter("app:countText")
+fun setCountText(textView: TextView, store: Store) {
+    when (store.remain_stat) {
+        "plenty" -> textView.text = "100개 이상"
+        "some" -> textView.text = "30개 이상"
+        "few" -> textView.text = "2개 이상"
+        "empty" -> textView.text = "1개 이하"
+        else -> { }
+    }
+}
+
+@BindingAdapter("app:textColor")
+fun setColorText(textView: TextView, store: Store) {
+    when (store.remain_stat) {
+        "plenty" -> textView.setTextColor(Color.GREEN)
+        "some" -> textView.setTextColor(Color.YELLOW)
+        "few" -> textView.setTextColor(Color.RED)
+        "empty" -> textView.setTextColor(Color.GRAY)
+        else -> { }
+    }
+}
+
+@BindingAdapter("app:distanceText")
+fun setDistanceText(textView: TextView, store: Store) {
+    textView.text = String.format("%.2fkm", store.distance)
 }

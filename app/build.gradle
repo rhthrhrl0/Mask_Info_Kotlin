@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt' //이것도 중요. 힐트 사용하려면 필요함.
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -31,7 +33,7 @@ android {
     }
 
     buildFeatures{
-        viewBinding true
+        dataBinding true
     }
 }
 
@@ -68,7 +70,12 @@ dependencies {
     // 위치 정보를 얻기위한 구글플레이서비스 추가.
     implementation "com.google.android.gms:play-services-location:20.0.0"
 
-    // tedpermission이라는 권한 관련 라이브러리임.
-    implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
+    //힐트위해.
+    implementation("com.google.dagger:hilt-android:2.38.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.38.1")
+}
 
+//힐트 위해
+kapt {
+    correctErrorTypes = true
 }
